@@ -1,0 +1,19 @@
+<html>
+  <body>
+    <h1>Lista de Processos</h1>
+    <ul id="process-list"></ul>
+
+    <script>
+      fetch("/api/processes/")
+        .then((response) => response.json())
+        .then((data) => {
+          const processList = document.getElementById("process-list");
+          data.forEach((process) => {
+            const li = document.createElement("li");
+            li.textContent = `Processo ${process.id_processo} - ${process.descricao}`;
+            processList.appendChild(li);
+          });
+        });
+    </script>
+  </body>
+</html>

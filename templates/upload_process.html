@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+    <h1>Cadastrar Novo Processo</h1>
+    <form id="process-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea class="form-control" id="descricao" name="descricao" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="partes" class="form-label">Partes</label>
+            <textarea class="form-control" id="partes" name="partes"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="demandas" class="form-label">Demandas</label>
+            <textarea class="form-control" id="demandas" name="demandas"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="resumo" class="form-label">Resumo</label>
+            <textarea class="form-control" id="resumo" name="resumo"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="resposta" class="form-label">Resposta</label>
+            <textarea class="form-control" id="resposta" name="resposta"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="arquivo" class="form-label">Arquivo</label>
+            <input type="file" class="form-control" id="arquivo" name="arquivo" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+
+    <script>
+        document.getElementById("processForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+    
+            const response = await fetch("{% url 'upload_process_api' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": form.querySelector("[name=csrfmiddlewaretoken]").value,
+                },
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                alert(`Processo criado com sucesso! ID: ${data.process_id}`);
+            } else {
+                const errorData = await response.json();
+                alert(`Erro: ${JSON.stringify(errorData)}`);
+            }
+        });
+    </script>
+{% endblock %}

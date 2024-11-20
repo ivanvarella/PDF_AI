@@ -1,19 +1,45 @@
-<html>
-  <body>
+{% extends 'base.html' %}
+
+{% block content %}
     <h1>Lista de Processos</h1>
-    <ul id="process-list"></ul>
+    <div id="process-list">
+        <!-- A lista de processos será preenchida aqui -->
+    </div>
+
+    <button class="btn btn-primary mt-3" onclick="loadProcesses()">Carregar Processos</button>
 
     <script>
-      fetch("/api/processes/")
-        .then((response) => response.json())
-        .then((data) => {
-          const processList = document.getElementById("process-list");
-          data.forEach((process) => {
-            const li = document.createElement("li");
-            li.textContent = `Processo ${process.id_processo} - ${process.descricao}`;
-            processList.appendChild(li);
-          });
-        });
+        // Função para carregar os processos da API
+        function loadProcesses() {
+            fetch('/api/processes/')
+                .then(response => response.json())
+                .then(data => {
+                    let processList = document.getElementById('process-list');
+                    processList.innerHTML = ''; // Limpa a lista
+
+                    if (data.length === 0) {
+                        processList.innerHTML = '<p>Nenhum processo encontrado.</p>';
+                    } else {
+                        data.forEach(process => {
+                            let processCard = document.createElement('div');
+                            processCard.classList.add('card', 'mb-3');
+                            processCard.innerHTML = `
+                                <div class="card-body">
+                                    <h5 class="card-title">${process.title}</h5>
+                                    <p class="card-text">${process.description}</p>
+                                    <a href="/processes/${process.id}/" class="btn btn-info">Detalhes</a>
+                                </div>
+                            `;
+                            processList.appendChild(processCard);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar os processos:', error);
+                });
+        }
+
+        // Carregar processos automaticamente ao carregar a página
+        window.onload = loadProcesses;
     </script>
-  </body>
-</html>
+{% endblock %}
