@@ -1,28 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <table>
-        <thead>
-            <tr>
-                <th>Arquivo</th>
-                <th>Resumo</th>
-                <th>Respostas</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for process in processes %}
-            <tr>
-                <td>{{ process.arquivo.name }}</td>
-                <td>{{ process.resumo }}</td>
-                <td>{{ process.resposta }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
+<html>
+  <body>
+    <h1>Lista de Processos</h1>
+    <ul id="process-list"></ul>
+
+    <script>
+      fetch("/api/processes/")
+        .then((response) => response.json())
+        .then((data) => {
+          const processList = document.getElementById("process-list");
+          data.forEach((process) => {
+            const li = document.createElement("li");
+            li.textContent = `Processo ${process.id_processo} - ${process.descricao}`;
+            processList.appendChild(li);
+          });
+        });
+    </script>
+  </body>
 </html>

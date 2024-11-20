@@ -1,42 +1,52 @@
-from django.shortcuts import render, redirect
-from .forms import ProcessForm
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
 from .models import Process
-from .utils import *
+from .serializers import ProcessSerializer
+from rest_framework import viewsets
 
 
+# ViewSet para listar e manipular Processos via API
+class ProcessViewSet(viewsets.ModelViewSet):
+    queryset = Process.objects.all()
+    serializer_class = ProcessSerializer
+
+
+# View para listar todos os Processos via API
+class ProcessList(APIView):
+    def get(self, request):
+        processes = Process.objects.all()
+        serializer = ProcessSerializer(processes, many=True)
+        return Response(serializer.data)
+
+
+# View para exibir os detalhes de um único Processo
+class ProcessDetail(APIView):
+    def get(self, request, pk):
+        try:
+            process = Process.objects.get(pk=pk)
+        except Process.DoesNotExist:
+            return Response(
+                {"error": "Process not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = ProcessSerializer(process)
+        return Response(serializer.data)
+
+
+# Função para fazer upload de um novo processo via POST
+@api_view(["POST"])
 def upload_process(request):
     if request.method == "POST":
-        print("teste3")
-        form = ProcessForm(request.POST, request.FILES)
-        if form.is_valid():
-            print("teste")
-            process = form.save()
-
-            # Extrair texto do PDF
-            filepath = process.arquivo.path
-            text = extract_text_from_pdf(filepath)
-
-            # Processar texto
-            parts, demands = extract_parts_and_demands(text)
-            resumo = summarize_with_gemini(text)
-            resposta = suggest_response_with_gemini(text, parts, demands)
-
-            # Salvar no modelo
-            process.descricao = text
-            process.partes = parts
-            process.demandas = demands
-            process.resumo = resumo
-            process.resposta = resposta
-            process.save()
-
-            return redirect("process_list")
-    else:
-        form = ProcessForm()
-        print("teste2")
-
-    return render(request, "upload.html", {"form": form})
-
-
-def process_list(request):
-    processes = Process.objects.all()
-    return render(request, "process_list.html", {"processes": processes})
+        data = request.data
+        # Aqui você pode ajustar os campos conforme o modelo Process
+        try:
+            process = Process.objects.create(
+                **data
+            )  # Cria o processo com os dados recebidos
+            return Response(
+                {"message": "Process uploaded successfully", "process_id": process.id},
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
