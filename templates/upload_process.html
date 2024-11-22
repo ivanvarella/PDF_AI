@@ -33,20 +33,45 @@
     </form>
 
     <script>
-        document.getElementById("processForm").addEventListener("submit", async (e) => {
+        document.getElementById("process-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             
             const form = e.target;
             const formData = new FormData(form);
     
-            const response = await fetch("{% url 'upload_process_api' %}", {
+            try {
+                // Fazendo a requisição POST com axios
+                const response = await axios.post("{% url 'processes-api-list' %}", formData, {
+                    headers: {
+                        "X-CSRFToken": form.querySelector("[name=csrfmiddlewaretoken]").value,
+                    },
+                });
+    
+                // Sucesso: alertar o usuário
+                alert(`Processo criado com sucesso! ID: ${response.data.process_id}`);
+            } catch (error) {
+                // Erro: alertar o usuário
+                const errorData = error.response ? error.response.data : "Erro desconhecido";
+                alert(`Erro: ${JSON.stringify(errorData)}`);
+            }
+        });
+    </script>
+
+    {% comment %} <script>
+        document.getElementById("process-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+
+            const response = await fetch("{% url 'processes-api' %}", {
                 method: "POST",
                 body: formData,
                 headers: {
                     "X-CSRFToken": form.querySelector("[name=csrfmiddlewaretoken]").value,
                 },
             });
-    
+
             if (response.ok) {
                 const data = await response.json();
                 alert(`Processo criado com sucesso! ID: ${data.process_id}`);
@@ -55,5 +80,5 @@
                 alert(`Erro: ${JSON.stringify(errorData)}`);
             }
         });
-    </script>
+    </script> {% endcomment %}
 {% endblock %}

@@ -6,7 +6,7 @@
         <!-- Os detalhes do processo serão preenchidos aqui -->
     </div>
 
-    <script>
+    {% comment %} <script>
         // Função para carregar os detalhes do processo
         function loadProcessDetails() {
             const processId = window.location.pathname.split('/').pop(); // Obtém o ID do processo da URL
@@ -33,5 +33,5 @@
 
         // Carregar os detalhes automaticamente ao carregar a página
         window.onload = loadProcessDetails;
-    </script>
+    </script> {% endcomment %}
 {% endblock %}

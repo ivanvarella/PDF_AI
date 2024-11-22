@@ -1,0 +1,14 @@
+1- Pega PDFs
+2- Carrega o PDF no ChatGPT
+3- O ChatGPT iria criar um resumo dos arquivos PDFs
+
+
+
+Dúvidas:
+
+- Responsabilidades do sistema Django
+- Cadastrar os arquivos PDFs ou Processar os PDFs e cadastrar os dados pertinentes de cada PDF
+- Cadastrar os promts que serão usados no GPT
+- Enviar Payload: (arquivo PDF ou os dados obtidos do PDF) + (prompt para o ChatGPT)
+- O ChatGPT deve retornar um resumo desejado de acordo com o prompt e dados do PDF
+- Salvar esses resumos referentes a cada PDF

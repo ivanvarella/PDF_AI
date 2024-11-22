@@ -6,9 +6,9 @@
         <!-- A lista de processos será preenchida aqui -->
     </div>
 
-    <button class="btn btn-primary mt-3" onclick="loadProcesses()">Carregar Processos</button>
+    {% comment %} <button class="btn btn-primary mt-3" onclick="loadProcesses()">Carregar Processos</button> {% endcomment %}
 
-    <script>
+    {% comment %} <script>
         // Função para carregar os processos da API
         function loadProcesses() {
             fetch('/api/processes/')
@@ -41,5 +41,5 @@
 
         // Carregar processos automaticamente ao carregar a página
         window.onload = loadProcesses;
-    </script>
+    </script> {% endcomment %}
 {% endblock %}
